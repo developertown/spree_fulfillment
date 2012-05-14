@@ -1,4 +1,4 @@
-Shipment.class_eval do
+Spree::Shipment.class_eval do
   
   # We can get infinite recursion if these options are applied more than once.  So ensure
   # we are the one and only one.
