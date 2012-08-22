@@ -25,13 +25,13 @@ class Fulfillment
   # Passes any shipments that are ready to the fulfillment service
   def self.process_ready
     log "process_ready start"
-    Shipment.ready.map(&:id).each do |sid|
-      Shipment.transaction do
+    Spree::Shipment.ready.map(&:id).each do |sid|
+      Spree::Shipment.transaction do
         begin
           # Use locking to avoid multiple shipments due to race conditions.
           # Note there's some risk of deadlock and bad behavior due to holding
           # a lock over a third party remote transaction which might be slow.
-          s = Shipment.find(sid, :lock => true)
+          s = Spree::Shipment.find(sid, :lock => true)
           if s && s.state == "ready"
             log "request ship for #{s.id} at #{Time.now}"
             s.ship
@@ -52,7 +52,7 @@ class Fulfillment
   # Gets tracking number and sends ship email when fulfillment house is done
   def self.process_shipped
     log "process_shipped start"
-    Shipment.fulfilling.each do |s|
+    Spree::Shipment.fulfilling.each do |s|
       begin
         tracking_info = unless s.valid_tracking?
           log "querying tracking status for #{s.id} at #{Time.now}"
